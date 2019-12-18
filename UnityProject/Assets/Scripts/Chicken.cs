@@ -8,7 +8,7 @@ public class Chicken : MonoBehaviour
     // 修飾詞 欄位類型 欄位名稱 (指定 值) 結束
     // 私人 - 隱藏 private (預設)
     // 公開 - 顯示 public 
-    [Header("移動速度")][Range(1, 2000)]
+    [Header("移動速度")] [Range(1, 2000)]
     public int speed = 10;             // 整數 1, 9999, -100
     [Header("旋轉速度"), Tooltip("G8雞的旋轉速度"), Range(1.5f, 200f)]
     public float turn = 20.5f;         // 浮點數
@@ -20,11 +20,17 @@ public class Chicken : MonoBehaviour
 
     public Transform tran;
     public Rigidbody rig;
+    public Animator ani;
+    public AudioSource aud;
+
+    public AudioClip soundBark;
 
     private void Update()
     {
         Turn();
         Run();
+        Bark();
+        Catch();
     }
 
 
@@ -34,6 +40,8 @@ public class Chicken : MonoBehaviour
     /// </summary>
     private void Run()
     {
+        if (ani.GetCurrentAnimatorStateInfo(0).IsName("撿東西"))return;
+        
         float v = Input.GetAxis("Vertical");
 
         //rig,AddForce(0, 0, speed * v);                //世界座標
@@ -42,6 +50,8 @@ public class Chicken : MonoBehaviour
         //tran.up      區域座標 y 軸
 
         rig.AddForce(tran.forward * speed * v * Time.deltaTime);       //區域座標
+        ani.SetBool("走路開關", v != 0);
+        
     }
 
     /// <summary>
@@ -58,7 +68,13 @@ public class Chicken : MonoBehaviour
     /// </summary>
     private void Bark()
     {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            //按下空白鍵拍翅膀
+            ani.SetTrigger("拍翅膀觸發器");
 
+            aud.PlayOneShot(soundBark, 0.6f);
+        }
     }
 
     /// <summary>
@@ -66,15 +82,19 @@ public class Chicken : MonoBehaviour
     /// </summary>
     private void Catch()
     {
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            //滑鼠左鍵撿東西
+            ani.SetTrigger("撿東西觸發器");
+        }
+     }
+        /// <summary>
+        /// 檢視任務
+        /// </summary>
+   private void Task()
+        {
 
-    }
-
-    /// <summary>
-    /// 檢視任務
-    /// </summary>
-    private void Task()
-    {
-
-    }
-    #endregion
+        }
+        #endregion
+     
 }
