@@ -16,14 +16,17 @@ public class Chicken : MonoBehaviour
     public bool mission;               // 布林值 true false
     [Header("玩家名稱")]
     public string _name = "G8雞";      // 字串 ""
-    #endregion
-
     public Transform tran;
     public Rigidbody rig;
     public Animator ani;
     public AudioSource aud;
 
     public AudioClip soundBark;
+
+    #endregion
+
+    [Header("檢物品位置")]
+    public Rigidbody rigCatch;
 
     private void Update()
     {
@@ -33,6 +36,18 @@ public class Chicken : MonoBehaviour
         Catch();
     }
 
+    private void OnTriggerStay(Collider other)
+    {
+
+        if (other.name == "Santa" && ani.GetCurrentAnimatorStateInfo(0).IsName("撿東西"))
+        {
+
+            Physics.IgnoreCollision(other, GetComponent<Collider>());
+            other.GetComponent<HingeJoint>().connectedBody = rigCatch;
+        }
+
+
+    }
 
     #region 方法區域
     /// <summary>
